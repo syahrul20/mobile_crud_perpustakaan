@@ -1,16 +1,32 @@
 package com.nur.crudlib;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,22 +40,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BookListAdapter.ItemClickListener {
 
-    AppCompatButton btnUbah;
-    AppCompatEditText edJudul, edPenerbit;
+    public static final String DATA = "DATA";
+    public static final int RESULT_ADD = 10;
+    public static final int RESULT_UPDATE = 11;
+    public static final int RESULT_DELETE = 12;
+
     RecyclerView rvBook;
+    FloatingActionButton fabAdd;
+    CoordinatorLayout container;
+    LinearLayoutCompat containerEmpty;
     DatabaseReference myRef;
+    ProgressBar progressLoading;
     BookListAdapter bookListAdapter;
+    ActivityResultLauncher<Intent> mStartForResult;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setUpFirebase();
         setUpView();
-        setUpListener();
+        setUpActivityForResult();
     }
 
     private void setUpFirebase() {
@@ -50,23 +74,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setUpView() {
-        edJudul = findViewById(R.id.ed_judul);
-        edPenerbit = findViewById(R.id.ed_penerbit);
-        btnUbah = findViewById(R.id.btn_submit);
+        container = findViewById(R.id.container);
         rvBook = findViewById(R.id.recyclerView);
+        fabAdd = findViewById(R.id.fab_add);
+        containerEmpty = findViewById(R.id.container_empty);
+        progressLoading = findViewById(R.id.progressLoading);
+
+        setUpListener();
+        setUpFirebase();
     }
 
     public void setUpListener() {
-        btnUbah.setOnClickListener(view -> {
-            String key = myRef.push().getKey();
-            BookField field = new BookField(key, edJudul.getText().toString(), edPenerbit.getText().toString());
-            if (key != null) {
-                myRef.child(key).setValue(field);
-            }
+        fabAdd.setOnClickListener(view -> {
+            Intent intent = new Intent(this, FormBookActivity.class);
+            mStartForResult.launch(intent);
         });
     }
 
     private void loadData() {
+        showLoading(true);
         ValueEventListener valueEventListener = new ValueEventListener() {
             final ArrayList<BookField> bookFieldArrayList = new ArrayList<>();
 
@@ -79,13 +105,18 @@ public class MainActivity extends AppCompatActivity {
                         bookFieldArrayList.add(bookField);
                     }
                 }
+                showLoading(false);
                 setUpRecyclerView(bookFieldArrayList);
-                Log.i("ZXCVD", "data" + bookFieldArrayList);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.i("ZXC", "loadErrorCause: ", error.toException());
+                Snackbar snackbar;
+                snackbar = Snackbar.make(container, "Gagal memuat data", Snackbar.LENGTH_SHORT);
+                View snackBarView = snackbar.getView();
+                snackBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                snackbar.show();
+
             }
         };
 
@@ -96,5 +127,46 @@ public class MainActivity extends AppCompatActivity {
     private void setUpRecyclerView(ArrayList<BookField> mArrayList) {
         bookListAdapter = new BookListAdapter(this, mArrayList);
         rvBook.setAdapter(bookListAdapter);
+        bookListAdapter.setClickListener(this);
+        if (bookListAdapter.getItemCount() == 0) {
+            containerEmpty.setVisibility(View.VISIBLE);
+            rvBook.setVisibility(View.GONE);
+        } else {
+            containerEmpty.setVisibility(View.GONE);
+            rvBook.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onItemClick(BookField bookData, int pos) {
+        Intent intent = new Intent(this, FormBookActivity.class);
+        intent.putExtra(DATA, bookData);
+        mStartForResult.launch(intent);
+    }
+
+    private void setUpActivityForResult() {
+        mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_ADD) {
+                        Snackbar.make(container, "Berhasil menambahkan data", Snackbar.LENGTH_SHORT).show();
+                    } else if (result.getResultCode() == RESULT_UPDATE) {
+//                        Snackbar.make(container, "Berhasil Mengubah data", Snackbar.LENGTH_SHORT).show();
+                        Snackbar snackbar;
+                        snackbar = Snackbar.make(container, "Berhasil Mengubah data", Snackbar.LENGTH_SHORT);
+                        View snackBarView = snackbar.getView();
+                        snackBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        snackbar.show();
+                    } else if (result.getResultCode() == RESULT_DELETE) {
+                        Snackbar.make(container, "Berhasil menghapus data", Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void showLoading(Boolean isShow) {
+        if (isShow) {
+            progressLoading.setVisibility(View.VISIBLE);
+        } else {
+            progressLoading.setVisibility(View.GONE);
+        }
     }
 }

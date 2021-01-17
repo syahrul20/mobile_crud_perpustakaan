@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CRUD Perpustakaan</string>
+    <string name="app_fab_write">write button</string>
+    <string name="app_add_book_data">Tambah Data Buku</string>
+    <string name="app_change_book_data">Ubah Data Buku</string>
+    <string name="app_book_title_hint">Ketik Judul Buku</string>
+    <string name="app_book_penerbit_hint">Ketik Nama Penerbit</string>
 </resources>

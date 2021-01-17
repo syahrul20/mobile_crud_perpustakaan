@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nur.crudlib.R;
 import com.nur.crudlib.field.BookField;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -24,6 +24,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ItemVi
 
     private LayoutInflater mInflate;
     private ArrayList<BookField> mData;
+    private ItemClickListener itemClickListener;
 
     public BookListAdapter(Context context, ArrayList<BookField> mData) {
         this.mInflate = LayoutInflater.from(context);
@@ -33,7 +34,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ItemVi
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflate.inflate(R.layout.item_recyclerview, parent, false);
+        View view = mInflate.inflate(R.layout.item_book, parent, false);
         return new ItemViewHolder(view);
     }
 
@@ -49,16 +50,35 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ItemVi
         return mData.size();
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        AppCompatTextView tvRecycler;
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
+        AppCompatTextView tvJudul, tvPengarang, tvTahun;
+        CardView cardViewItemBuku;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvRecycler = itemView.findViewById(R.id.tv_recycler);
+            tvJudul = itemView.findViewById(R.id.tv_judul);
+            tvPengarang = itemView.findViewById(R.id.tv_pengarang);
+            tvTahun = itemView.findViewById(R.id.tv_tahun);
+            cardViewItemBuku = itemView.findViewById(R.id.cardview_item_buku);
         }
 
         private void bind(BookField bookData) {
-            tvRecycler.setText(bookData.getJudul());
+            tvJudul.setText(bookData.getJudul());
+            tvPengarang.setText(bookData.getPengarang());
+            tvTahun.setText(bookData.getYearPublished());
+            cardViewItemBuku.setOnClickListener(view -> {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(bookData, getAdapterPosition());
+                }
+            });
         }
+    }
+
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    public interface ItemClickListener {
+        void onItemClick(BookField bookData, int pos);
     }
 }
