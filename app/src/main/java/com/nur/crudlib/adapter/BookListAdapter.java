@@ -1,7 +1,7 @@
 package com.nur.crudlib.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +20,11 @@ import java.util.ArrayList;
  * بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
  * Created By Fahmi on 17/01/21
  */
+
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ItemViewHolder> {
 
-    private LayoutInflater mInflate;
-    private ArrayList<BookField> mData;
+    private final LayoutInflater mInflate;
+    private final ArrayList<BookField> mData;
     private ItemClickListener itemClickListener;
 
     public BookListAdapter(Context context, ArrayList<BookField> mData) {
@@ -46,7 +47,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ItemVi
 
     @Override
     public int getItemCount() {
-        Log.i("ZXC", "cause " + mData.size());
         return mData.size();
     }
 
@@ -62,10 +62,11 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ItemVi
             cardViewItemBuku = itemView.findViewById(R.id.cardview_item_buku);
         }
 
+        @SuppressLint("SetTextI18n")
         private void bind(BookField bookData) {
             tvJudul.setText(bookData.getJudul());
             tvPengarang.setText(bookData.getPengarang());
-            tvTahun.setText(bookData.getYearPublished());
+            tvTahun.setText("Tahun terbit " + bookData.getYearPublished());
             cardViewItemBuku.setOnClickListener(view -> {
                 if (itemClickListener != null) {
                     itemClickListener.onItemClick(bookData, getAdapterPosition());

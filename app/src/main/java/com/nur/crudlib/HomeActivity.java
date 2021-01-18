@@ -1,29 +1,17 @@
 package com.nur.crudlib;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,15 +20,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nur.crudlib.Utils.SnackBarInfo;
 import com.nur.crudlib.adapter.BookListAdapter;
 import com.nur.crudlib.field.BookField;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements BookListAdapter.ItemClickListener {
+public class HomeActivity extends AppCompatActivity implements BookListAdapter.ItemClickListener {
 
     public static final String DATA = "DATA";
     public static final int RESULT_ADD = 10;
@@ -55,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements BookListAdapter.I
     ProgressBar progressLoading;
     BookListAdapter bookListAdapter;
     ActivityResultLauncher<Intent> mStartForResult;
+    SnackBarInfo snackbar = new SnackBarInfo();
 
 
     @Override
@@ -100,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements BookListAdapter.I
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 bookFieldArrayList.clear();
                 for (DataSnapshot bookSnapShot : snapshot.getChildren()) {
-                    if (!Arrays.asList(bookFieldArrayList).contains(bookSnapShot.getValue(BookField.class))) {
+                    if (!Objects.equals(bookFieldArrayList, bookSnapShot.getValue(BookField.class))) {
                         BookField bookField = bookSnapShot.getValue(BookField.class);
                         bookFieldArrayList.add(bookField);
                     }
@@ -148,16 +136,11 @@ public class MainActivity extends AppCompatActivity implements BookListAdapter.I
         mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_ADD) {
-                        Snackbar.make(container, "Berhasil menambahkan data", Snackbar.LENGTH_SHORT).show();
+                        snackbar.setUpSnackBar(this, container, "Data berhasil ditambahkan");
                     } else if (result.getResultCode() == RESULT_UPDATE) {
-//                        Snackbar.make(container, "Berhasil Mengubah data", Snackbar.LENGTH_SHORT).show();
-                        Snackbar snackbar;
-                        snackbar = Snackbar.make(container, "Berhasil Mengubah data", Snackbar.LENGTH_SHORT);
-                        View snackBarView = snackbar.getView();
-                        snackBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                        snackbar.show();
+                        snackbar.setUpSnackBar(this, container, "Data berhasil diubah");
                     } else if (result.getResultCode() == RESULT_DELETE) {
-                        Snackbar.make(container, "Berhasil menghapus data", Snackbar.LENGTH_SHORT).show();
+                        snackbar.setUpSnackBar(this, container, "Data berhasil dihapus");
                     }
                 });
     }

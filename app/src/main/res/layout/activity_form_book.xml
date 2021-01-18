@@ -60,7 +60,8 @@
                 android:id="@+id/input_layout_book_title"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:errorIconDrawable="@null">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/ed_book_title"
@@ -77,13 +78,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp">
+                android:layout_marginTop="14dp"
+                app:errorIconDrawable="@null">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/ed_book_creator"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Ketik Nama Pengarang"
+                    android:hint="@string/app_book_creator_hint"
                     android:inputType="textCapWords"
                     android:textColorHint="@color/colorGreyLight" />
 
@@ -94,7 +96,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp">
+                android:layout_marginTop="14dp"
+                app:errorIconDrawable="@null">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/ed_book_publsihed"
@@ -111,13 +114,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp">
+                android:layout_marginTop="14dp"
+                app:errorIconDrawable="@null">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/ed_book_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Ketik Kategori Buku"
+                    android:hint="@string/app_book_category_hint"
                     android:inputType="textCapWords"
                     android:textColorHint="@color/colorGreyLight" />
 
@@ -134,13 +138,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    app:errorIconDrawable="@null">
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/ed_book_year_published"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Ketik Tahun Terbit"
+                        android:hint="@string/app_book_year_published_hint"
                         android:inputType="phone"
                         android:textColorHint="@color/colorGreyLight" />
 
@@ -152,13 +157,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    app:errorIconDrawable="@null">
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/ed_book_thickness"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Ketik Tebal Buku (cm)"
+                        android:hint="@string/app_book_thickness_hint"
                         android:inputType="phone"
                         android:textColorHint="@color/colorGreyLight" />
 
@@ -171,13 +177,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp">
+                android:layout_marginTop="14dp"
+                app:errorIconDrawable="@null">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/ed_book_isbn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Ketik Nomor ISBN"
+                    android:hint="@string/app_book_isbn_hint"
                     android:inputType="textCapWords"
                     android:textColorHint="@color/colorGreyLight" />
 
@@ -196,7 +203,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/bg_red_round_10dp"
-                    android:text="Hapus"
+                    android:text="@string/app_data_delete"
                     android:textColor="@color/white"
                     app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -209,10 +216,11 @@
                     android:background="@drawable/bg_green_round_10dp"
                     android:paddingHorizontal="18dp"
                     android:paddingVertical="8dp"
-                    android:text="Simpan"
+                    android:text="@string/app_data_save"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:layout_constraintLeft_toLeftOf="parent" />
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    tools:ignore="RelativeOverlap" />
 
             </RelativeLayout>
 

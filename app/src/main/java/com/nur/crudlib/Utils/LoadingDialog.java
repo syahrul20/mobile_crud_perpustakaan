@@ -1,4 +1,4 @@
-package com.nur.crudlib.dialog;
+package com.nur.crudlib.Utils;
 
 import android.content.Context;
 import androidx.appcompat.app.AlertDialog;

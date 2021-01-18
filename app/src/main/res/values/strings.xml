@@ -5,4 +5,21 @@
     <string name="app_change_book_data">Ubah Data Buku</string>
     <string name="app_book_title_hint">Ketik Judul Buku</string>
     <string name="app_book_penerbit_hint">Ketik Nama Penerbit</string>
+    <string name="app_loading_text">Mohon Tunggu&#8230;</string>
+    <string name="app_book_creator_hint">Ketik Nama Pengarang</string>
+    <string name="app_book_category_hint">Ketik Kategori Buku</string>
+    <string name="app_book_year_published_hint">Ketik Tahun Terbit</string>
+    <string name="app_book_thickness_hint">Ketik Tebal Buku (cm)</string>
+    <string name="app_book_isbn_hint">Ketik Nomor ISBN</string>
+    <string name="app_data_delete">Hapus</string>
+    <string name="app_data_save">Simpan</string>
+    <string name="app_data_change">Ubah</string>
+    <string name="app_empty_data">Ups, Data belum tersedia!</string>
+    <string name="app_book_should_fill_title">Judul buku harus diisi</string>
+    <string name="app_book_should_fill_creator">Pengarang harus diisi</string>
+    <string name="app_book_should_fill_published">Penerbit harus diisi</string>
+    <string name="app_book_should_fill_category">Kategori harus diisi</string>
+    <string name="app_book_should_fill_year_published">Tahun terbit harus diisi</string>
+    <string name="app_book_should_fill_thickness">Tebal buku harus diisi</string>
+    <string name="app_book_should_fill_isbn">Nomor ISBN harus diisi</string>
 </resources>

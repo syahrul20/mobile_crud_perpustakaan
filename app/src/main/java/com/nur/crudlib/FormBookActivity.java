@@ -14,7 +14,7 @@ import android.view.View;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.nur.crudlib.dialog.LoadingDialog;
+import com.nur.crudlib.Utils.LoadingDialog;
 import com.nur.crudlib.field.BookField;
 
 public class FormBookActivity extends AppCompatActivity {
@@ -31,7 +31,7 @@ public class FormBookActivity extends AppCompatActivity {
             inputLayoutBookThickness, inputLayoutBookIsbn;
     AppCompatEditText edBookTitle, edBookPublished, edBookCreator, edBookCategory,
             edBookYearPublished, edBookThickness, edBookIsbn;
-    DatabaseReference myRef;
+    DatabaseReference databaseReference;
     BookField bookField;
     final Handler handler = new Handler(Looper.getMainLooper());
     Mode editMode = Mode.ADD;
@@ -66,11 +66,11 @@ public class FormBookActivity extends AppCompatActivity {
         }
         if (editMode == Mode.ADD) {
             tvTitle.setText(getString(R.string.app_add_book_data));
-            btnSubmit.setText("Simpan");
+            btnSubmit.setText(getString(R.string.app_data_save));
             btnDelete.setVisibility(View.GONE);
         } else {
             tvTitle.setText(getString(R.string.app_change_book_data));
-            btnSubmit.setText("Ubah");
+            btnSubmit.setText(getString(R.string.app_data_change));
             btnDelete.setVisibility(View.VISIBLE);
         }
     }
@@ -99,12 +99,15 @@ public class FormBookActivity extends AppCompatActivity {
     }
 
     private void setUpListener() {
-        btnback.setOnClickListener(view -> {
-            finish();
-        });
+        btnback.setOnClickListener(view -> finish());
 
         btnSubmit.setOnClickListener(view -> {
-            String key = myRef.push().getKey();
+            String key;
+            if (bookField == null) {
+                key = databaseReference.push().getKey();
+            } else {
+                key = bookField.getUid();
+            }
             String bookTitle = edBookTitle.getText().toString();
             String bookCreator = edBookCreator.getText().toString();
             String bookPublished = edBookPublished.getText().toString();
@@ -123,38 +126,89 @@ public class FormBookActivity extends AppCompatActivity {
                     bookIsbn
             );
             if (key != null) {
-                showLoading(true);
-                if (editMode == Mode.ADD) {
-                    myRef.child(key).setValue(field);
-                } else {
-                    myRef.child(bookField.getUid()).setValue(field);
+                if (checkValidation()) {
+                    showLoading(true);
+                    databaseReference.child(key).setValue(field);
+                    handler.postDelayed(() -> {
+                        showLoading(false);
+                        if (editMode == Mode.ADD) {
+                            setResult(HomeActivity.RESULT_ADD);
+                        } else {
+                            setResult(HomeActivity.RESULT_UPDATE);
+                        }
+                        finish();
+                    }, 500);
                 }
-                handler.postDelayed(() -> {
-                    showLoading(false);
-                    if (editMode == Mode.ADD) {
-                        setResult(MainActivity.RESULT_ADD);
-                    } else {
-                        setResult(MainActivity.RESULT_UPDATE);
-                    }
-                    finish();
-                }, 500);
             }
         });
 
         btnDelete.setOnClickListener(view -> {
             showLoading(true);
-            myRef.child(bookField.getUid()).removeValue();
+            databaseReference.child(bookField.getUid()).removeValue();
             handler.postDelayed(() -> {
                 showLoading(false);
-                setResult(MainActivity.RESULT_DELETE);
+                setResult(HomeActivity.RESULT_DELETE);
                 finish();
             }, 500);
         });
     }
 
+    private Boolean checkValidation() {
+        if (edBookTitle.getText().toString().matches("")) {
+            inputLayoutBookTitle.setError(getString(R.string.app_book_should_fill_title));
+            return false;
+        } else {
+            inputLayoutBookTitle.setErrorEnabled(false);
+        }
+
+        if (edBookCreator.getText().toString().matches("")) {
+            inputLayoutBookCreator.setError(getString(R.string.app_book_should_fill_creator));
+            return false;
+        } else {
+            inputLayoutBookCreator.setErrorEnabled(false);
+        }
+
+        if (edBookPublished.getText().toString().matches("")) {
+            inputLayoutBookPublished.setError(getString(R.string.app_book_should_fill_published));
+            return false;
+        } else {
+            inputLayoutBookPublished.setErrorEnabled(false);
+        }
+
+        if (edBookCategory.getText().toString().matches("")) {
+            inputLayoutBookCategory.setError(getString(R.string.app_book_should_fill_category));
+            return false;
+        } else {
+            inputLayoutBookCategory.setErrorEnabled(false);
+        }
+
+        if (edBookYearPublished.getText().toString().matches("")) {
+            inputLayoutBookYearPublished.setError(getString(R.string.app_book_should_fill_year_published));
+            return false;
+        } else {
+            inputLayoutBookCategory.setErrorEnabled(false);
+        }
+
+        if (edBookThickness.getText().toString().matches("")) {
+            inputLayoutBookThickness.setError(getString(R.string.app_book_should_fill_thickness));
+            return false;
+        } else {
+            inputLayoutBookThickness.setErrorEnabled(false);
+        }
+
+        if (edBookIsbn.getText().toString().matches("")) {
+            inputLayoutBookIsbn.setError(getString(R.string.app_book_should_fill_isbn));
+            return false;
+        } else {
+            inputLayoutBookIsbn.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
     private void setUpFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("buku");
+        this.databaseReference = database.getReference("buku");
     }
 
     public void showLoading(Boolean isShow) {
